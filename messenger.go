@@ -54,6 +54,12 @@ func sendAlert(message string) {
 func sendEmail(message string) {
 	addrs, _ := os.LookupEnv("RECIPIENTS")
 	emailAddr,found := os.LookupEnv("SENDER")
+
+	if !found {
+		log.Println("Could not load email, error occurred")
+		return
+	}
+
 	pass,_:= os.LookupEnv("EMAIL_PASS")
 	to := strings.Split(addrs,",")
 	msg := "From: " + emailAddr + "\r\n" +
@@ -63,6 +69,6 @@ func sendEmail(message string) {
 	a := smtp.PlainAuth("", emailAddr,pass,"smtp.gmail.com")
 	err := smtp.SendMail("smtp.gmail.com:465", a,  emailAddr, to, []byte(msg))
 	if err != nil {
-		log.Printf("smtp error: %s", err)
+		log.Printf("smtp error: %s\n", err)
 	}
 }
